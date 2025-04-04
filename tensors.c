@@ -127,16 +127,6 @@ int** zero_matrix(int row, int col){
 }
 
 
-
-int (*simple_int_matrix())[3] {  // Return pointer to 3-element int arrays
-    static int matrix[3][3] = {  // Static array (not freed after function returns)
-        {1, 2, 3},
-        {4, 5, 6},
-        {7, 8, 9}
-    };
-    return matrix;  // ✅ Works: Static memory persists
-}
-
 float** basic_matrix(){
     float **aa;
     const char row = 3, col = 3;
@@ -206,16 +196,11 @@ int main(){
     printf("%d", (int)sizeof(float*)*3);
     float **ptr_to_ptr = basic_matrix();
 
-    
-
-
     free_matrix(3, ptr_to_ptr);
 
 
     zero_matrix(1,1);
 
-
-    int (*mat)[3] = simple_int_matrix();
 
     for(int i = 0; i < 3; i++) {
         for(int j = 0; j < 3; j++) {
