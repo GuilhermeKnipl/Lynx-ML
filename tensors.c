@@ -11,7 +11,7 @@
 //#include <wchar.h>
 
 
-typedef struct {
+typedef struct New_Vector {
     int* vector;
     int* len;
     //float mean;
@@ -185,14 +185,23 @@ int main(){
         {{12 ,23} ,{24,5}},
     };
  */
+    int y = 2;
+    float x = -8.0;
 
+    float pow2 = 1.0;
+    for(int i=1;i <= y; i++ ){
+        pow2 *= x;
+    }
+    printf("\n My power function %f", pow2);
+    printf("\n c Power function %f\n",powf(x,2));
 
     New_Vector* array = linear_arr(5, 10, 1);
 
-    printf("%d\n",array->vector[0]);
-    printf("Size: %d",*array->len);
     vector_mean(array);
     
+    //printf("\n%f  %f",sqrootf(-27.0), sqrtf(-27.0));
+    printf("\nAbs of -100: %f: ", absf(-100.0));
+    printf("\nPower: %d: ", power(20, 2));
 
     return 0;
 }
