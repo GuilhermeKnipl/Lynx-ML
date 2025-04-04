@@ -8,9 +8,15 @@
 
 
 
-#define power(x, y) ({int _pow = 1;for (int _i = 1; _i <= (y); _i++) { _pow *= (x);}_pow;})
+#define EULER 2.71828
 
-
+static inline int power(int x, int y) {
+    int result = 1;
+    for (int i = 0; i < y; ++i) {
+        result *= x;
+    }
+    return result;
+}
 
 
 static float powerf(float x, int y){
@@ -37,15 +43,18 @@ static char powerc(char x, int y){
     return pow;
 }
 
+// Absolute value of a float if(x < 0) then -(x)
 static float absf(float x){
+
     if (x<0){
-        x = -(-100);
+        x = -(x);
     }
 
     return x;
 }
 
 
+// Squareroot of a int -> float
 static int sqroot(int n) {
     float x = 0.0;
     float step = 0.00001;
@@ -61,6 +70,7 @@ static int sqroot(int n) {
 }
 
 static float sqrootf(float n) {
+    // Squareroot of a float -> float
     if (n<0){
         return NAN;
     }
