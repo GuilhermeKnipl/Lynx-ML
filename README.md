@@ -1,1 +1,1 @@
-# LynsCience
+# LynxCience
