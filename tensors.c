@@ -4,99 +4,75 @@
 #include <stdio.h>
 //#include <stdlib.h>
 #include <stdbool.h>
-//
+#include "kmath.h"
 #include <stdlib.h>
+#include <math.h>
 //#include <string.h>
 //#include <wchar.h>
 
 
-/* 
-void zero_matrix(int row, int col){
-    int matrix[row][col];
-    int *matrix_ptr = calloc(row*col, sizeof(int));
-
-    for (int i = 0; i < row; i++){
-        for(int j = 0; j < col; j++){
-            matrix_ptr[i * col + j];
-        };
-
-
-    }
-
-}
-*/
-
-
-
 typedef struct {
-    int* Vec;
-    int lenght;
-    float mean;
-    float sum;
-    float max;
+    int* vector;
+    int* len;
+    //float mean;
+    //float sum;
+    // float max;
 }New_Vector;
 
 
-void vector_mean(int* vec_ptr){
-    int lenght = sizeof(&vec_ptr)/sizeof(int);
-    printf("\n--%d",lenght);
+void vector_mean(New_Vector *vec_ptr){
+    int lenght = *vec_ptr->len;
+    int sum = 0;
+    float mean;
+
+    for (int i = 0; i < lenght; i++){
+        sum += vec_ptr->vector[i];;
+    };
+    mean = (float)sum/(float)lenght;
+
+    float deviation = 0.0;
+
+    for (int i = 0; i < lenght; i++){
+        deviation += powf((float)vec_ptr->vector[i] - mean,2);
+    };
+    
+    float variance = deviation/((float)lenght -1.0);
+    float std = sqrtf(variance);
+
+    printf("\nTotal sum of array is: %d",sum);
+    printf("\nTotal mean of array is: %.2f",mean);
+    printf("\nStandard Deviation %.2f", std);
 }
 
 
-int* linear_arr(int min,int max,int step, New_Vector vec){
+New_Vector* linear_arr(int min,int max,int step){
 
     int i,idx;
-    int *ptr;
+    New_Vector* vec = (New_Vector*)malloc(sizeof(New_Vector)); 
+
 
     if (max < min) {
         int new_max = max;
         max = min;
         min = new_max;
     }
-    int vec_size = ((max-min)/step)+1;
 
-    ptr = (int*)malloc(vec_size* sizeof(int));
+    int* vec_size = (int*)malloc(sizeof(int));
+    
+    *vec_size = ((max-min)/step)+1;
+
+    vec->vector = (int*)malloc(sizeof(int));
 
     for (i = min, idx = 0; i <= max; i = i + step, idx++){
-        ptr[idx] = i;
-    }
-
-    for (int item = 0; item < vec_size; item++ ){
-        printf("%d\n", ptr[item]);
+        vec->vector[idx] = i;
+        printf(" %d:%d ",idx,vec->vector[idx]);
     }
     
-    printf("\n%d",  vec_size );
-    return ptr;
+    vec->len = vec_size;
+
+    return vec;
 }
 
-
-/*
-int* linear_arr(int min,int max,int step){
-
-    int i,idx;
-    int *ptr;
-
-    if (max < min) {
-        int new_max = max;
-        max = min;
-        min = new_max;
-    }
-    int vec_size = ((max-min)/step)+1;
-
-    ptr = (int*)malloc(vec_size* sizeof(int));
-
-    for (i = min, idx = 0; i <= max; i = i + step, idx++){
-        ptr[idx] = i;
-    }
-
-    for (int item = 0; item < vec_size; item++ ){
-        printf("%d\n", ptr[item]);
-    }
-    
-    printf("\n%d",  vec_size );
-    return ptr;
-}
-    */
 
 
 int** zero_matrix(int row, int col){
@@ -152,7 +128,6 @@ float** basic_matrix(){
         }
     }
 
-    printf("\n--After allocating-- \n");
     if (aa != NULL){
         for (int id = 0; id < 3; id++){
             printf("%.1f %.1f %.1f\n",
@@ -180,7 +155,8 @@ void free_matrix(int row, float** ptr){
     printf("\n----- Matrix Memory Freed and set to null -----\n\n");
 }
 
-void free_vec(int row, int** ptr){
+void free_vec(int row, int** ptr){     
+
     for (int i = 0; i < row; i++){
         free(ptr[i]); 
         ptr[i]=NULL;
@@ -192,35 +168,31 @@ void free_vec(int row, int** ptr){
 }
 
 int main(){
+
     
-    printf("%d", (int)sizeof(float*)*3);
     float **ptr_to_ptr = basic_matrix();
 
     free_matrix(3, ptr_to_ptr);
 
-
     zero_matrix(1,1);
 
 
-    for(int i = 0; i < 3; i++) {
-        for(int j = 0; j < 3; j++) {
-            printf("%d ", mat[i][j]);
-        }
-        printf("\n");
-    }
-    
 
+    
+/*
     int a[2][2][2] = {
         {{10,11},{21,22}},
         {{12 ,23} ,{24,5}},
     };
- 
+ */
 
-    New_Vector newvec;  
 
-    int* lin_array = linear_arr(-2, 2, 1, newvec);
+    New_Vector* array = linear_arr(5, 10, 1);
 
-    vector_mean(lin_array);
+    printf("%d\n",array->vector[0]);
+    printf("Size: %d",*array->len);
+    vector_mean(array);
+    
 
     return 0;
 }
