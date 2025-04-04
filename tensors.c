@@ -1,4 +1,5 @@
 
+#include <cassert>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -11,16 +12,24 @@
 //#include <wchar.h>
 
 
-typedef struct New_Vector {
+typedef struct Vector {
     int* vector;
     int* len;
     //float mean;
     //float sum;
     // float max;
-}New_Vector;
+}Vector;
+
+typedef struct Vectorf {
+    float* vector;
+    float* len;
+    //float mean;
+    //float sum;
+    // float max;
+}Vectorf;
 
 
-void vector_mean(New_Vector *vec_ptr){
+void vector_mean(Vector *vec_ptr){
     int lenght = *vec_ptr->len;
     int sum = 0;
     float mean;
@@ -33,11 +42,11 @@ void vector_mean(New_Vector *vec_ptr){
     float deviation = 0.0;
 
     for (int i = 0; i < lenght; i++){
-        deviation += powf((float)vec_ptr->vector[i] - mean,2);
+        deviation += powerf((float)vec_ptr->vector[i] - mean,2);
     };
     
     float variance = deviation/((float)lenght -1.0);
-    float std = sqrtf(variance);
+    float std = sqrootf(variance);
 
     printf("\nTotal sum of array is: %d",sum);
     printf("\nTotal mean of array is: %.2f",mean);
@@ -45,10 +54,11 @@ void vector_mean(New_Vector *vec_ptr){
 }
 
 
-New_Vector* linear_arr(int min,int max,int step){
+
+Vector* linear_arr(int min,int max,int step){
 
     int i,idx;
-    New_Vector* vec = (New_Vector*)malloc(sizeof(New_Vector)); 
+    Vector* vec = (Vector*)malloc(sizeof(Vector)); 
 
 
     if (max < min) {
@@ -73,7 +83,22 @@ New_Vector* linear_arr(int min,int max,int step){
     return vec;
 }
 
+Vector new_vec();
 
+
+
+Vector* linear_reg(Vector* x, Vector* y){
+    int x_len = *x->len, y_len = *y->len, i;
+    float intercept, slope;
+
+    if (x_len == y_len){
+        for (i = 0; i < x_len; i++){
+            intercept
+        }
+    }
+
+
+}
 
 int** zero_matrix(int row, int col){
     int i, j;
@@ -176,32 +201,21 @@ int main(){
 
     zero_matrix(1,1);
 
-
-
+    Vector* xarray = linear_arr(5, 10, 1);
+    Vector* yarray = (Vector*)malloc(sizeof(Vector));
     
-/*
-    int a[2][2][2] = {
-        {{10,11},{21,22}},
-        {{12 ,23} ,{24,5}},
-    };
- */
-    int y = 2;
-    float x = -8.0;
+    int* vec_size = (int*)malloc(sizeof(int));
+    
+    vec_size = xarray->vector;
 
-    float pow2 = 1.0;
-    for(int i=1;i <= y; i++ ){
-        pow2 *= x;
+    yarray->vector = (int*)malloc(sizeof(int));
+    
+    for(int i; i < *xarray->len; i++ ){
+        yarray->vector[i] = power(xarray->vector[i],2);
+        printf(":%d ", yarray->vector[i]);
     }
-    printf("\n My power function %f", pow2);
-    printf("\n c Power function %f\n",powf(x,2));
 
-    New_Vector* array = linear_arr(5, 10, 1);
 
-    vector_mean(array);
-    
-    //printf("\n%f  %f",sqrootf(-27.0), sqrtf(-27.0));
-    printf("\nAbs of -100: %f: ", absf(-100.0));
-    printf("\nPower: %d: ", power(20, 2));
 
     return 0;
 }
