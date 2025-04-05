@@ -19,6 +19,13 @@ typedef struct Vector {
     float* std;
 }Vector;
 
+typedef struct LinearReg{
+    float* intercept;
+    float* slope;
+
+}LinearReg;
+
+
 typedef struct Vectorf {
     float* vector;
     float* len;
@@ -28,7 +35,8 @@ typedef struct Vectorf {
 }Vectorf;
 
 
-Vector* linear_arr(int min,int max,int step){
+
+Vector* linear_array(int min,int max,int step){
 
     int i,idx;
     Vector* vec = (Vector*)malloc(sizeof(Vector)); 
@@ -71,19 +79,15 @@ Vector* linear_arr(int min,int max,int step){
     *vec->mean = sum/(float)*vec_size ;
     *vec->std = std;
 
-    printf("\n%f", *vec->sum);
-    printf("\n%f", *vec->mean);
-    printf("\n%f\n", *vec->std);
     return vec;
 }
 
-/*
+
 void ols_slope(Vector* x, Vector* y){
-    VectorData* x_vals = vector_summary(x);
-    VectorData* y_vals = vector_summary(y);
     
     int x_len = *x->len;
     int y_len = *y->len;
+
     float cov_summation = 0.0f, var_summation = 0.0f;
 
     printf("%d", x_len);
@@ -91,8 +95,8 @@ void ols_slope(Vector* x, Vector* y){
 
     if (x_len == y_len){
         for (int i = 0; i < x_len; i++){
-            float x_diff = (float)x->vector[i] - *x_vals->mean;
-            float y_diff = (float)y->vector[i] - *y_vals->mean;
+            float x_diff = (float)x->vector[i] - *x->mean;
+            float y_diff = (float)y->vector[i] - *y->mean;
 
             cov_summation += x_diff * y_diff;
             var_summation += x_diff * x_diff;
@@ -103,7 +107,7 @@ void ols_slope(Vector* x, Vector* y){
     } else {
         printf("Vectors have different lengths!\n");
     }
-}*/
+}
 
 Vector* linear_reg(Vector* x, Vector* y){
 
@@ -221,22 +225,31 @@ int main(){
 
     zero_matrix(1,1);
 
-    Vector* xarray = linear_arr(5, 10, 1);
+    Vector* xarray = linear_array(5, 10, 1);
     Vector* yarray = (Vector*)malloc(sizeof(Vector));
-    
+
     int* vec_size = (int*)malloc(sizeof(int));
-    
-    vec_size = xarray->vector;
 
     yarray->vector = (int*)malloc(sizeof(int));
+
+    *vec_size = *xarray->len;
+
+    yarray->len = vec_size;
+
+
+    Vector* tarray = linear_array(0, 12, 2);
+
     
-    for(int i; i < *xarray->len; i++ ){
+    for(int i = 0; i < *xarray->len; i++ ){
         yarray->vector[i] = pow(xarray->vector[i],2);
         printf(":%d ", yarray->vector[i]);
     }
 
+
+
+
     //VectorData* t = vector_summary(xarray);
-    //ols_slope(xarray, yarray);
+    ols_slope(xarray, tarray);
 
     //printf("\n%f", *t->mean);
     //printf("\n%f", *t->sum);
