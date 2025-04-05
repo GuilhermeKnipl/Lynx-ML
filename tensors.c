@@ -7,6 +7,7 @@
 //#include "kmath.h"
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 //#include <string.h>
 //#include <wchar.h>
 
@@ -22,7 +23,6 @@ typedef struct Vector {
 typedef struct LinearReg{
     float* intercept;
     float* slope;
-
 }LinearReg;
 
 
@@ -83,8 +83,22 @@ Vector* linear_array(int min,int max,int step){
 }
 
 
-void ols_slope(Vector* x, Vector* y){
+float ols_intercept(float slope, float x_mean, float y_mean){
+    float intercept =y_mean - (slope*x_mean);
+    return intercept;
+}
+
+LinearReg* ols_slope_intercept(Vector* x, Vector* y){
     
+    LinearReg* regression = (LinearReg*)malloc(sizeof(LinearReg));
+    regression->intercept = (float*)malloc(sizeof(float));
+    regression->slope = (float*)malloc(sizeof(float));
+
+    if (!x || !y) {
+        printf("\nVec is null or invalid");
+        return NULL;
+    }
+
     int x_len = *x->len;
     int y_len = *y->len;
 
@@ -101,15 +115,27 @@ void ols_slope(Vector* x, Vector* y){
             cov_summation += x_diff * y_diff;
             var_summation += x_diff * x_diff;
         }
-
         float slope = cov_summation / var_summation;
-        printf("Slope is %f\n", slope);
+     
+        *regression->intercept = ols_intercept(slope, *x->mean, *y->mean);
+        *regression->slope = slope;
+        
+        return regression;
     } else {
         printf("Vectors have different lengths!\n");
+        return NULL;
     }
+
+    
 }
 
-Vector* linear_reg(Vector* x, Vector* y){
+
+
+
+void linear_reg(Vector* x, Vector* y){
+    
+    LinearReg* regression = ols_slope_intercept(x, y);
+    float* y_pred = (float*)malloc(*x->len * sizeof(y_pred));
 
 
     int x_len = *x->len, y_len = *y->len, i;
@@ -117,12 +143,24 @@ Vector* linear_reg(Vector* x, Vector* y){
 
     if (x_len == y_len){
         for (i = 0; i < x_len; i++){
-            
+            y_pred[i] = *regression->intercept + (*regression->slope * (x->vector[i]));
+            printf("\n%f", y_pred[i]);
         }
     }
-
-
 }
+
+
+void free_vec(Vector** x) {
+    if (x && *x) {
+        if ((*x)->mean) {free((*x)->mean);(*x)->mean = NULL;};
+        if ((*x)->std) {free((*x)->std);(*x)->std = NULL;};
+        if ((*x)->vector) {free((*x)->vector);(*x)->vector = NULL;};
+        if ((*x)->sum) {free((*x)->sum);(*x)->sum = NULL;};
+        if ((*x)->len) {free((*x)->len);(*x)->len = NULL;};
+        free(*x);*x = NULL;
+    }
+}
+
 
 int** zero_matrix(int row, int col){
     int i, j;
@@ -204,56 +242,40 @@ void free_matrix(int row, float** ptr){
     printf("\n----- Matrix Memory Freed and set to null -----\n\n");
 }
 
-void free_vec(int row, int** ptr){     
-
-    for (int i = 0; i < row; i++){
-        free(ptr[i]); 
-        ptr[i]=NULL;
-    }
-    free(ptr);
-    ptr = NULL;  
-
-    printf("\n----- Vector Memory Freed and set to null -----");
-}
-
 int main(){
 
     
-    float **ptr_to_ptr = basic_matrix();
+    //float **ptr_to_ptr = basic_matrix();
 
-    free_matrix(3, ptr_to_ptr);
+    //free_matrix(3, ptr_to_ptr);
 
-    zero_matrix(1,1);
-
+    //zero_matrix(1,1);
+    Vector* yarray = linear_array(0, 10, 2);
     Vector* xarray = linear_array(5, 10, 1);
-    Vector* yarray = (Vector*)malloc(sizeof(Vector));
 
-    int* vec_size = (int*)malloc(sizeof(int));
-
-    yarray->vector = (int*)malloc(sizeof(int));
-
-    *vec_size = *xarray->len;
-
-    yarray->len = vec_size;
-
-
-    Vector* tarray = linear_array(0, 12, 2);
-
+    LinearReg* a = ols_slope_intercept(xarray, yarray);
     
-    for(int i = 0; i < *xarray->len; i++ ){
-        yarray->vector[i] = pow(xarray->vector[i],2);
-        printf(":%d ", yarray->vector[i]);
-    }
+    linear_reg(xarray, yarray);
 
+    //printf("\n%f", *a->intercept);
+    //printf("\n%f", *a->slope);
 
-
-
-    //VectorData* t = vector_summary(xarray);
-    ols_slope(xarray, tarray);
-
-    //printf("\n%f", *t->mean);
-    //printf("\n%f", *t->sum);
-    //printf("\n%f", *t->std);
-
+    free_vec(&xarray);free_vec(&yarray);
     return 0;
 }
+
+
+/*    Vector* yarray = (Vector*)malloc(sizeof(Vector));
+
+int* vec_size = (int*)malloc(sizeof(int));
+
+yarray->vector = (int*)malloc(sizeof(int));
+
+*vec_size = *xarray->len;
+
+yarray->len = vec_size;
+
+for(int i = 0; i < *xarray->len; i++ ){
+    yarray->vector[i] = pow(xarray->vector[i],2);
+    printf(":%d ", yarray->vector[i]);
+}*/
