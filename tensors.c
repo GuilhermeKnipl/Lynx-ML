@@ -4,7 +4,7 @@
 #include <stdio.h>
 //#include <stdlib.h>
 #include <stdbool.h>
-#include "kmath.h"
+//#include "kmath.h"
 #include <stdlib.h>
 #include <math.h>
 //#include <string.h>
@@ -14,95 +14,69 @@
 typedef struct Vector {
     int* vector;
     int* len;
-    //aa22
-    //float mean;
-    //float sum;
-    // float max;
-}Vector;
-
-typedef struct VectorData{
     float* mean;
     float* sum;
-    //float max;
-    //float min;
     float* std;
-}VectorData;
+}Vector;
 
 typedef struct Vectorf {
     float* vector;
     float* len;
-    //float mean;
-    //float sum;
-    // float max;
+    float* mean;
+    float* sum;
+    float* std;
 }Vectorf;
-
-
-VectorData* vector_summary(Vector *vec_ptr){
-
-    VectorData* summary = (VectorData*)malloc(sizeof(VectorData));
-    summary->sum = (float*)malloc(sizeof(float));
-    summary->std = (float*)malloc(sizeof(float));
-    summary->mean = (float*)malloc(sizeof(float)); 
-
-    int lenght = *vec_ptr->len;
-    int sum = 0;
-    float mean;
-
-
-
-    for (int i = 0; i < lenght; i++){
-        sum += vec_ptr->vector[i];;
-    };
-
-    mean = (float)sum/(float)lenght;
-
-    float deviation = 0.0;
-
-    for (int i = 1; i < lenght; i++){
-        deviation += powf((float)vec_ptr->vector[i] - mean,2);
-    };
-    float variance = deviation/((float)lenght - 1.0);
-    float std = sqrootf(variance);
-
-    //summary->max = max ;
-    //summary->min = ;
-
-
-    *summary->sum = sum;
-    *summary->std = std;
-    *summary->mean = mean ;
-
-    return summary;
-}
 
 
 Vector* linear_arr(int min,int max,int step){
 
     int i,idx;
     Vector* vec = (Vector*)malloc(sizeof(Vector)); 
+    int* vec_size = (int*)malloc(sizeof(int));
+    vec->sum = (float*)malloc(sizeof(float));
+    vec->std = (float*)malloc(sizeof(float));
+    vec->mean = (float*)malloc(sizeof(float)); 
+    
+    float sum = 0.0;
 
+    float deviation = 0.0;
 
     if (max < min) {
         int new_max = max;
         max = min;
         min = new_max;
     }
-
-    int* vec_size = (int*)malloc(sizeof(int));
     
     *vec_size = ((max-min)/step)+1;
+    
+    vec->vector = (int*)malloc(sizeof(int) * (*vec_size));
 
-    vec->vector = (int*)malloc(sizeof(int));
+    float mean = sum / *vec_size ;
 
     for (i = min, idx = 0; i <= max; i = i + step, idx++){
+        
         vec->vector[idx] = i;
+        deviation += powf(vec->vector[idx] - mean,2);
+        sum += vec->vector[idx];
+
         printf(" %d:%d ",idx,vec->vector[idx]);
     }
+
+
+    float variance = deviation/((float)*vec_size - 1.0);
+    float std = sqrtf(variance);
     
     vec->len = vec_size;
+    *vec->sum = sum;
+    *vec->mean = sum/(float)*vec_size ;
+    *vec->std = std;
 
+    printf("\n%f", *vec->sum);
+    printf("\n%f", *vec->mean);
+    printf("\n%f\n", *vec->std);
     return vec;
 }
+
 /*
 void ols_slope(Vector* x, Vector* y){
     VectorData* x_vals = vector_summary(x);
@@ -257,7 +231,7 @@ int main(){
     yarray->vector = (int*)malloc(sizeof(int));
     
     for(int i; i < *xarray->len; i++ ){
-        yarray->vector[i] = power(xarray->vector[i],2);
+        yarray->vector[i] = pow(xarray->vector[i],2);
         printf(":%d ", yarray->vector[i]);
     }
 
