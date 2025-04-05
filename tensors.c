@@ -1,5 +1,4 @@
 
-#include <cassert>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -15,10 +14,19 @@
 typedef struct Vector {
     int* vector;
     int* len;
+    //aa22
     //float mean;
     //float sum;
     // float max;
 }Vector;
+
+typedef struct VectorData{
+    float* mean;
+    float* sum;
+    //float max;
+    //float min;
+    float* std;
+}VectorData;
 
 typedef struct Vectorf {
     float* vector;
@@ -29,30 +37,43 @@ typedef struct Vectorf {
 }Vectorf;
 
 
-void vector_mean(Vector *vec_ptr){
+VectorData* vector_summary(Vector *vec_ptr){
+
+    VectorData* summary = (VectorData*)malloc(sizeof(VectorData));
+    summary->sum = (float*)malloc(sizeof(float));
+    summary->std = (float*)malloc(sizeof(float));
+    summary->mean = (float*)malloc(sizeof(float)); 
+
     int lenght = *vec_ptr->len;
     int sum = 0;
     float mean;
 
+
+
     for (int i = 0; i < lenght; i++){
         sum += vec_ptr->vector[i];;
     };
+
     mean = (float)sum/(float)lenght;
 
     float deviation = 0.0;
 
-    for (int i = 0; i < lenght; i++){
-        deviation += powerf((float)vec_ptr->vector[i] - mean,2);
+    for (int i = 1; i < lenght; i++){
+        deviation += powf((float)vec_ptr->vector[i] - mean,2);
     };
-    
-    float variance = deviation/((float)lenght -1.0);
+    float variance = deviation/((float)lenght - 1.0);
     float std = sqrootf(variance);
 
-    printf("\nTotal sum of array is: %d",sum);
-    printf("\nTotal mean of array is: %.2f",mean);
-    printf("\nStandard Deviation %.2f", std);
-}
+    //summary->max = max ;
+    //summary->min = ;
 
+
+    *summary->sum = sum;
+    *summary->std = std;
+    *summary->mean = mean ;
+
+    return summary;
+}
 
 
 Vector* linear_arr(int min,int max,int step){
@@ -82,18 +103,43 @@ Vector* linear_arr(int min,int max,int step){
 
     return vec;
 }
+/*
+void ols_slope(Vector* x, Vector* y){
+    VectorData* x_vals = vector_summary(x);
+    VectorData* y_vals = vector_summary(y);
+    
+    int x_len = *x->len;
+    int y_len = *y->len;
+    float cov_summation = 0.0f, var_summation = 0.0f;
 
-Vector new_vec();
+    printf("%d", x_len);
 
 
+    if (x_len == y_len){
+        for (int i = 0; i < x_len; i++){
+            float x_diff = (float)x->vector[i] - *x_vals->mean;
+            float y_diff = (float)y->vector[i] - *y_vals->mean;
+
+            cov_summation += x_diff * y_diff;
+            var_summation += x_diff * x_diff;
+        }
+
+        float slope = cov_summation / var_summation;
+        printf("Slope is %f\n", slope);
+    } else {
+        printf("Vectors have different lengths!\n");
+    }
+}*/
 
 Vector* linear_reg(Vector* x, Vector* y){
+
+
     int x_len = *x->len, y_len = *y->len, i;
     float intercept, slope;
 
     if (x_len == y_len){
         for (i = 0; i < x_len; i++){
-            intercept
+            
         }
     }
 
@@ -215,7 +261,12 @@ int main(){
         printf(":%d ", yarray->vector[i]);
     }
 
+    //VectorData* t = vector_summary(xarray);
+    //ols_slope(xarray, yarray);
 
+    //printf("\n%f", *t->mean);
+    //printf("\n%f", *t->sum);
+    //printf("\n%f", *t->std);
 
     return 0;
 }
