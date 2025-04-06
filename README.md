@@ -16,7 +16,7 @@ LynxCience is a **C library** designed for handling **gradients**, **mathematica
 
 ### Features  
 - 📌 Structured handling of **matrices, vectors, and tensors**  
-- (WIP) Basic **linear regression implementation**  
+- ✔️ Basic **linear regression implementation**  
 
 ---
 
