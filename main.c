@@ -42,11 +42,7 @@ Tensor3d* tensor_init(int x , int y, int z){
 
 int main(){
 
-
-    Tensor3d* tensor3d = tensor_init(2, 2, 2);
-    //int* plane = (int*)malloc(sizeof(int) * (*tensor3d->z));
-    int* row = (int*)malloc(sizeof(int) * (*tensor3d->x));
-
+    Tensor3d* tensor3d = tensor_init(1, 3, 4);
 
     // PLANES INDEXING 0 -> Iter = plane[0] iter1-> iter2 = plane[1] ...
     // ROW INDEXING 0 -> Iter = 
@@ -59,17 +55,29 @@ int main(){
         printf("\nPlane %d upper limit index: %d", i + 1, plane[i]);
     }
 
-    // Itera sobre os índices do tensor linearizado
+    /*
     for (int r = 1; r <= plane[planes - 1]; r++) {
         if (r <= plane[0]) {
             printf("\nPlane 1: r = %d (index = %d)", r, *tensor3d->x * r);
         } else if (r <= plane[1]) {
             printf("\nPlane 2: r = %d (index = %d)", r, *tensor3d->x * r);
         }
-        // Adicione mais planos se necessário
     }
-   
+   */
+    int stride = 3, a =0 ;
+    int idx_row = 0;
 
+    for (int idx=0;idx < 12; idx++ ){
+        if (a == stride){
+            printf("\nY_Val:%2.f", tensor3d->vector[idx]);
+            printf("\nLast x:%2.f", tensor3d->vector[idx-1]);
+            idx_row += 1;
+            printf("\nidx_row = %d\n", idx_row);
+            a = 0;
+        }
+        a+=1;
+        printf("\n---%d : %d---\n", a, idx);
+    }
 
 
 
